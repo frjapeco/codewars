@@ -1,0 +1,144 @@
+<script>
+
+    function getLast(sequence) {
+        return sequence[sequence.length - 1];
+    }
+
+    function getTargetNumber(row, col, size) {
+        return (row == size - 1 && col == size - 1) ? 0 : size * row + col + 1;
+    }
+
+    function getCurrentPosition(sequence, number) {
+        for (var i = 0; i < sequence.length; i++) {
+            for (var j = 0; j < sequence[i].length; j++) {
+                if (sequence[i][j] == number) {
+                    return { row: i, col: j };
+                }
+            }
+        }
+    }
+
+    function getTargetPosition(sequence, number) {
+        var last = getLast(sequence);
+        var size = sequence.length;
+        var row = (number - 1) / size;
+        var col = (number - 1) % size;
+        return { row: row, col: col };
+    }
+
+    function moveZero(sequence, path) {
+        // this has to move to next position of the path
+    }
+
+    function getPath(sequence, currentPosition, targetPosition) {
+        var last = getLast(sequence);
+        var drow = targetPosition.row - currentPosition.row;
+        var dcol = targetPosition.col - currentPosition.col;
+        var path = [];
+        if (dcol > 0) {   
+            for (var i = 1; i <= dcol; i++) {
+                path.push({ row: currentPosition.row, col: currentPosition.col + i });
+            }         
+        } else if (dcol < 0) {
+            for (var i = -1; i >= dcol; i--) {
+                path.push({ row: currentPosition.row, col: currentPosition.col + i });
+            }       
+        }
+        var lastCol = (path.length > 0) ? currentPosition.col : path[path.length - 1].col;
+        if (drow > 0) {
+            for (var i = 1; i <= drow; i++) {
+                path.push({ row: currentPosition.row + i, col: lastCol });
+            }   
+        } else if (drow < 0) {
+            for (var i = -1; i >= drow; i--) {
+                path.push({ row: currentPosition.row + i, col: lastCol });
+            }   
+        }
+        return path;
+    }
+
+    function isSolved(sequence) {
+        var last = getLast(sequence);
+        var size = last.length;
+
+        for (var i = 0; i < last.length; i++) {
+            for (var j = 0; j < last[i].length; j++) {
+                if (last[i][j] != getTargetNumber(i, j, size)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function moveToTargetPosition(sequence, path) {
+
+    }
+
+    function solveTopCorner(sequence, row) {
+        var size = sequence[row].size;
+
+        for (var i = 0; i < size - 2; i++) {
+            var number = getTargetNumber(row, col + i, size);
+            var targetPosition = getTargetPosition(sequence, number);
+            var currentPosition = getCurrentPosition(sequence, number);
+            var path = getPath(sequence, currentPosition, targetPosition);
+            sequence = moveToTargetPosition(sequence,path);
+        }
+    }
+
+    function solveLeftCorner(sequence, col) {
+        // TODO: pending to implement this function.
+    }
+    
+    function remainingIs2x3(sequence) {
+        var last = getLast(sequence);
+        var size = last.length;
+
+        for (var i = 0; i < last.length - 2; i++) {
+            for (var j = 0; j < last[i].length; j++) {
+                if (last[i][j] != getTargetNumber(i, j, size)) {
+                    return false;
+                }
+            }
+        }
+        for (; i < last.length; i++) {
+            for (var j = 0; j < last[i].length - 3; j++) {
+                if (last[i][j] != getTargetNumber(i, j, size)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    function solve2x3(sequence) {
+        // TODO: pending to implement this function.
+    }
+
+    function solvePuzzle(puzzle) {
+        var sequence = [puzzle];
+        var i = 0;
+
+        while (!isSolved(sequence)) {
+            sequence = solveTopCorner(sequence, i);
+            if (remainingIs2x3(sequence)) {
+                sequence = solve2x3(sequence);
+            } else {
+                sequence = solveLeftCorner(sequence, i);
+                i++;
+            }
+        }
+        return sequence;
+    }
+    
+    (function() {
+        var puzzle = [
+            [2,8,0],
+            [7,5,6],
+            [3,4,1]
+        ];
+        console.log(solvePuzzle(puzzle));
+    })()
+    
+</script>

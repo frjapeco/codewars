@@ -1,0 +1,49 @@
+<script>
+
+function square_sums_row(N) {
+    let maxSquaresNumber = Math.floor(Math.sqrt(N + N - 1));
+    let squares = []; for (let i = 2; i <= maxSquaresNumber; i++) squares.push(i * i);
+
+    let visited = [...Array(N + 1)].map((v, num) => false);
+    const edges = [...Array(N + 1)]
+        .map((i, num1) => squares
+							.map((sqr) => sqr - num1)
+							.filter((num2) => num2 <= N && num2 > 0 && num2 != num1));
+
+    function DFS(currentNum, path) {
+        visited[currentNum] = true;
+        path.push(currentNum);
+        if (path.length >= N) return path;
+
+        let unvisitedNodes = edges[currentNum]
+            .filter((n) => !visited[n])
+            .map((n) => [
+                n, // num
+                edges[n].filter((x) => !visited[x]).length // unvisited edges
+            ])
+            .sort((x1, x2) => x1[1] - x2[1])
+            .map(x => x[0]);
+        for (let next of unvisitedNodes) {
+            var found = DFS(next, path);
+            if (found) return found;
+        }
+
+        visited[currentNum] = false;
+        path.pop();
+        return false;
+    }
+
+    let nodes = [...Array(N).keys()]
+        .map((n, i) => n + 1)
+        .sort((n1, n2) => edges[n1].length - edges[n2].length);
+    for (let node of nodes) {
+        var found = DFS(node, []);
+        if (found) return found;
+    }
+
+    return false;
+}
+
+console.log(square_sums_row(150));
+
+</script>
